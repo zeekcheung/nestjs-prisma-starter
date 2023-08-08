@@ -24,15 +24,19 @@ export class ArticlesController {
   @Post()
   // use @ApiCreatedResponse decorators to define the response type of the created article.
   @ApiCreatedResponse({ type: ArticleEntity })
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(createArticleDto);
+  async create(@Body() createArticleDto: CreateArticleDto) {
+    const article = await this.articlesService.create(createArticleDto);
+    // return ArticleEntity instead of Prisma.Article objects
+    return new ArticleEntity(article);
   }
 
   @Get()
   // use @ApiOkResponse decorators to define the response type of the found articles.
   @ApiOkResponse({ type: ArticleEntity, isArray: true })
-  findAll() {
-    return this.articlesService.findAll();
+  async findAll() {
+    const articles = await this.articlesService.findAll();
+    // return ArticleEntity instead of Prisma.Article objects
+    return articles.map((article) => new ArticleEntity(article));
   }
 
   @Get(':id')
@@ -44,30 +48,36 @@ export class ArticlesController {
     if (!article) {
       throw new NotFoundException(`Article with ${id}} does not exist.`);
     }
-    return article;
+    // return ArticleEntity instead of Prisma.Article objects
+    return new ArticleEntity(article);
   }
 
   @Get('drafts')
   @ApiOkResponse({ type: ArticleEntity, isArray: true })
-  findDrafts() {
-    return this.articlesService.findDrafts();
+  async findDrafts() {
+    const articles = await this.articlesService.findDrafts();
+    // return ArticleEntity instead of Prisma.Article objects
+    return articles.map((article) => new ArticleEntity(article));
   }
 
   @Patch(':id')
   @ApiOkResponse({ type: ArticleEntity })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    return this.articlesService.update(id, updateArticleDto);
+    const article = await this.articlesService.update(id, updateArticleDto);
     // not found exception thrown by Prisma will be handled by the PrismaClientExceptionFilter
     // which is defined in src/prisma-client-exception/prisma-client-exception.filter.ts
     // and applied to the entire application
+    // return ArticleEntity instead of Prisma.Article objects
+    return new ArticleEntity(article);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: ArticleEntity })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.articlesService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const article = await this.articlesService.remove(id);
+    return new ArticleEntity(article);
   }
 }

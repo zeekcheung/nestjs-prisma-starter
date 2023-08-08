@@ -1,5 +1,5 @@
-import { ValidationPipe } from '@nestjs/common';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
@@ -11,6 +11,10 @@ async function bootstrap() {
   // use whitelist to filter unnecessary fields from client requests
   // whitelist will filter all fields without validation decorators, even if they are defined in th DTO
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  // use interceptors to execute extra logic before and after the router handler is executed
+  // use ClassSerializerInterceptor to serialize the response
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // config swagger
   const swaggerConfig = new DocumentBuilder()
