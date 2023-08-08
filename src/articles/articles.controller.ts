@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -37,8 +38,13 @@ export class ArticlesController {
   @Get(':id')
   @ApiOkResponse({ type: ArticleEntity })
   // use pipes to perform input transformation
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.articlesService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const article = await this.articlesService.findOne(id);
+    // use a built-in exception provided by NestJS to handle exceptions
+    if (!article) {
+      throw new NotFoundException(`Article with ${id}} does not exist.`);
+    }
+    return article;
   }
 
   @Get('drafts')
@@ -54,6 +60,9 @@ export class ArticlesController {
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
     return this.articlesService.update(id, updateArticleDto);
+    // not found exception thrown by Prisma will be handled by the PrismaClientExceptionFilter
+    // which is defined in src/prisma-client-exception/prisma-client-exception.filter.ts
+    // and applied to the entire application
   }
 
   @Delete(':id')
