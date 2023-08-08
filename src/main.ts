@@ -1,9 +1,15 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // use pipes to perform input validation
+  // use whitelist to filter unnecessary fields from client requests
+  // whitelist will filter all fields without validation decorators, even if they are defined in th DTO
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   // config swagger
   const swaggerConfig = new DocumentBuilder()

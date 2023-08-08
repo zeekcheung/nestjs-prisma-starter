@@ -19,11 +19,11 @@
     "build": "pnpm nest build",
     "prepare": "husky install",
     "docker:db": "docker-compose -f docker-compose.db.yml up -d",
-    "prisma:init": "pnpm prisma init",
-    "prisma:migrate": "pnpm prisma migrate dev",
-    "prisma:seed": "pnpm prisma db seed",
-    "prisma:generate": "pnpm prisma generate",
-    "prisma:studio": "pnpm prisma studio"
+    "prisma:init": "pnpm dlx prisma init",
+    "prisma:migrate": "pnpm dlx prisma migrate dev",
+    "prisma:seed": "pnpm dlx prisma db seed",
+    "prisma:generate": "pnpm dlx prisma generate",
+    "prisma:studio": "pnpm dlx prisma studio"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -31,6 +31,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.1.6",
     "@prisma/client": "5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.0"
