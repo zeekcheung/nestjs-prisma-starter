@@ -20,6 +20,8 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setDescription('The Median API description')
     .setVersion('0.1')
+    // "authenticate" yourself directly in swagger so that you can test these endpoints
+    .addBearerAuth()
     .build();
 
   // setup swagger
